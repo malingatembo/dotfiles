@@ -1,0 +1,186 @@
+---
+# Dotfiles Deployment Playbook
+# Deploys dotfiles across Ubuntu and Fedora systems
+
+- name: Deploy dotfiles configuration
+  hosts: localhost
+  connection: local
+  become: false
+
+  vars:
+    dotfiles_dir: "{{ ansible_env.HOME }}/dotfiles"
+    backup_dir: "{{ ansible_env.HOME }}/.dotfiles_backup_{{ ansible_date_time.epoch }}"
+
+  tasks:
+    - name: Display deployment info
+      ansible.builtin.debug:
+        msg: "Deploying dotfiles from {{ dotfiles_dir }} on {{ ansible_os_family }} system"
+
+    # Package Installation
+    - name: Install required packages on Ubuntu/Debian
+      ansible.builtin.apt:
+        name:
+          - tmux
+          - vim
+          - neovim
+          - curl
+          - git
+          - fonts-powerline
+        state: present
+        update_cache: true
+      become: true
+      when: ansible_os_family == "Debian"
+      tags: packages
+
+    - name: Install required packages on Fedora/RedHat
+      ansible.builtin.dnf:
+        name:
+          - tmux
+          - vim
+          - neovim
+          - curl
+          - git
+          - powerline-fonts
+        state: present
+      become: true
+      when: ansible_os_family == "RedHat"
+      tags: packages
+
+    # Backup existing dotfiles
+    - name: Create backup directory
+      ansible.builtin.file:
+        path: "{{ backup_dir }}"
+        state: directory
+        mode: '0755'
+      tags: backup
+
+    - name: Check for existing dotfiles
+      ansible.builtin.stat:
+        path: "{{ ansible_env.HOME }}/{{ item }}"
+      register: dotfile_stats
+      loop:
+        - .bashrc
+        - .bash_profile
+        - .vimrc
+        - .tmux.conf
+      tags: backup
+
+    - name: Backup existing dotfiles
+      ansible.builtin.copy:
+        src: "{{ ansible_env.HOME }}/{{ item.item }}"
+        dest: "{{ backup_dir }}/{{ item.item }}"
+        mode: preserve
+        remote_src: true
+      when: item.stat.exists and not item.stat.islnk
+      loop: "{{ dotfile_stats.results }}"
+      tags: backup
+
+    - name: Display backup location
+      ansible.builtin.debug:
+        msg: "Backed up existing dotfiles to {{ backup_dir }}"
+      when: dotfile_stats.results | selectattr('stat.exists') | list | length > 0
+      tags: backup
+
+    # Remove old symlinks
+    - name: Remove old symlinks if they exist
+      ansible.builtin.file:
+        path: "{{ ansible_env.HOME }}/{{ item }}"
+        state: absent
+      when: dotfile_stats.results[loop_index].stat.islnk is defined and dotfile_stats.results[loop_index].stat.islnk
+      loop:
+        - .bashrc
+        - .bash_profile
+        - .vimrc
+        - .tmux.conf
+      loop_control:
+        index_var: loop_index
+      tags: symlinks
+
+    # Create symlinks
+    - name: Create symlinks for dotfiles
+      ansible.builtin.file:
+        src: "{{ dotfiles_dir }}/{{ item }}"
+        dest: "{{ ansible_env.HOME }}/{{ item }}"
+        state: link
+        force: true
+      loop:
+        - .bashrc
+        - .bash_profile
+        - .vimrc
+        - .tmux.conf
+      tags: symlinks
+
+    # Vim setup
+    - name: Check if vim-plug is installed
+      ansible.builtin.stat:
+        path: "{{ ansible_env.HOME }}/.vim/autoload/plug.vim"
+      register: vim_plug_stat
+      tags: vim
+
+    - name: Install vim-plug
+      ansible.builtin.shell: |
+        curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+          https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+      when: not vim_plug_stat.stat.exists
+      tags: vim
+
+    - name: Install Vim plugins
+      ansible.builtin.command:
+        cmd: vim +PlugInstall +qall
+      args:
+        creates: "{{ ansible_env.HOME }}/.vim/plugged"
+      ignore_errors: true
+      tags: vim
+
+    # Tmux setup
+    - name: Check if TPM is installed
+      ansible.builtin.stat:
+        path: "{{ ansible_env.HOME }}/.tmux/plugins/tpm"
+      register: tpm_stat
+      tags: tmux
+
+    - name: Clone Tmux Plugin Manager (TPM)
+      ansible.builtin.git:
+        repo: https://github.com/tmux-plugins/tpm
+        dest: "{{ ansible_env.HOME }}/.tmux/plugins/tpm"
+        version: master
+      when: not tpm_stat.stat.exists
+      tags: tmux
+
+    - name: Check if tmux plugins are installed
+      ansible.builtin.stat:
+        path: "{{ ansible_env.HOME }}/.tmux/plugins/tmux-resurrect"
+      register: tmux_plugins_stat
+      tags: tmux
+
+    - name: Install Tmux plugins using TPM
+      ansible.builtin.command:
+        cmd: "{{ ansible_env.HOME }}/.tmux/plugins/tpm/bin/install_plugins"
+      when: not tmux_plugins_stat.stat.exists
+      tags: tmux
+
+    # Git setup - check for git-prompt.sh
+    - name: Check if git-prompt.sh exists
+      ansible.builtin.stat:
+        path: "{{ ansible_env.HOME }}/.git-prompt.sh"
+      register: git_prompt_stat
+      tags: git
+
+    - name: Download git-prompt.sh
+      ansible.builtin.get_url:
+        url: https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh
+        dest: "{{ ansible_env.HOME }}/.git-prompt.sh"
+        mode: '0644'
+      when: not git_prompt_stat.stat.exists
+      tags: git
+
+    # Summary
+    - name: Deployment summary
+      ansible.builtin.debug:
+        msg:
+          - "Dotfiles deployment complete!"
+          - "Symlinks created for: .bashrc, .bash_profile, .vimrc, .tmux.conf"
+          - "Vim-plug and plugins installed"
+          - "TPM and tmux plugins installed"
+          - "Please run 'source ~/.bashrc' to apply changes"
+          - "For tmux changes, restart tmux or run 'tmux source ~/.tmux.conf'"

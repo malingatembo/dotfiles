@@ -1,0 +1,16 @@
+# Ansible Inventory File
+# Add your remote servers here
+
+[local]
+localhost ansible_connection=local
+
+[ubuntu_servers]
+# Example:
+# ubuntu1 ansible_host=192.168.1.10 ansible_user=username
+
+[fedora_servers]
+# Example:
+# fedora1 ansible_host=192.168.1.20 ansible_user=username
+
+[all:vars]
+ansible_python_interpreter=/usr/bin/python3

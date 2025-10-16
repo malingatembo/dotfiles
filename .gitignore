@@ -1,0 +1,45 @@
+# Vim
+*.swp
+*.swo
+*~
+.vim/plugged/
+.vim/.netrwhist
+
+# Tmux
+.tmux/plugins/
+.tmux/resurrect/
+
+# Backup files
+*.backup
+*.bak
+.dotfiles_backup_*/
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Ansible
+*.retry
+ansible/.vault_pass
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Logs
+*.log
+
+# Local dev
+.local/
+.cache/
+.vscode/
+.idea/
+
+# Sensitive files
+*_private
+*.key
+*.pem
+secrets/
