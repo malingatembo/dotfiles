@@ -3,8 +3,7 @@
 # Deploys dotfiles across Ubuntu and Fedora systems
 
 - name: Deploy dotfiles configuration
-  hosts: localhost
-  connection: local
+  hosts: all
   become: false
 
   vars:
