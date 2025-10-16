@@ -65,7 +65,7 @@
           - pylint
           - flake8
         executable: pip3
-        extra_args: --user
+        extra_args: --user --break-system-packages
       tags: packages
 
     # Backup existing dotfiles
@@ -198,6 +198,7 @@
       command:
         cmd: "{{ ansible_env.HOME }}/.tmux/plugins/tpm/bin/install_plugins"
       when: not tmux_plugins_stat.stat.exists
+      ignore_errors: true
       tags: tmux
 
     # Git setup - check for git-prompt.sh
