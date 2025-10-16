@@ -66,6 +66,7 @@
           - flake8
         executable: pip3
         extra_args: --user --break-system-packages
+      ignore_errors: true
       tags: packages
 
     # Backup existing dotfiles
