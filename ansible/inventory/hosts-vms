@@ -9,5 +9,12 @@ localhost ansible_connection=local
 # vm1 ansible_host=192.168.1.50 ansible_user=username
 # vm2 ansible_host=192.168.1.51 ansible_user=username
 
+# NOTE: If you get "Too many authentication failures" error, add:
+#   ansible_ssh_common_args='-o IdentitiesOnly=yes'
+# This tells SSH to only use the specified key file.
+
+ci ansible_host=10.0.144.108 ansible_user=cloud-user ansible_ssh_private_key_file=~/.ssh/ci ansible_ssh_common_args='-o IdentitiesOnly=yes'
+
+
 [all:vars]
 ansible_python_interpreter=/usr/bin/python3

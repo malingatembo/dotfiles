@@ -175,6 +175,17 @@ Available themes: Ocean Blue, Forest Green, Sunset, Purple Haze, Mint Fresh, Fir
 ## Troubleshooting
 
 ### SSH Connection Issues
+
+**"Too many authentication failures" error:**
+```bash
+# Add this to your VM entry in hosts-vms:
+ansible_ssh_common_args='-o IdentitiesOnly=yes'
+
+# Full example:
+# ci ansible_host=10.0.144.108 ansible_user=cloud-user ansible_ssh_private_key_file=~/.ssh/ci ansible_ssh_common_args='-o IdentitiesOnly=yes'
+```
+
+**Test connections:**
 ```bash
 # Test SSH manually
 ssh user@hostname
