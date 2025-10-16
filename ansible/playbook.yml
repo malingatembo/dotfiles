@@ -141,9 +141,7 @@
       tags: vim
 
     - name: Install vim-plug
-      ansible.builtin.shell: |
-        curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
-          https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+      ansible.builtin.shell: curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
       when: not vim_plug_stat.stat.exists
       tags: vim
 
@@ -158,19 +156,13 @@
       tags: vim
 
     - name: Install Vim plugins (may take a few minutes)
-      ansible.builtin.shell: |
-        vim +'PlugInstall --sync' +qall
-      args:
-        executable: /bin/bash
+      ansible.builtin.shell: vim +PlugInstall +qall
       register: vim_plugin_install
       changed_when: true
       tags: vim
 
     - name: Update Vim plugins
-      ansible.builtin.shell: |
-        vim +'PlugUpdate' +qall
-      args:
-        executable: /bin/bash
+      ansible.builtin.shell: vim +PlugUpdate +qall
       ignore_errors: true
       tags: vim
 
