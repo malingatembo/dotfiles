@@ -1,16 +1,21 @@
 # Ansible Inventory File
-# Add your remote servers here
+# Raspberry Pi Cluster
 
 [local]
 localhost ansible_connection=local
 
-[ubuntu_servers]
-# Example:
-# ubuntu1 ansible_host=192.168.1.10 ansible_user=username
+[controller]
+c00 ansible_host=10.0.0.100 ansible_user=c00
 
-[fedora_servers]
-# Example:
-# fedora1 ansible_host=192.168.1.20 ansible_user=username
+[workers]
+w01 ansible_host=10.0.0.101 ansible_user=w01
+w02 ansible_host=10.0.0.102 ansible_user=w02
+w03 ansible_host=10.0.0.103 ansible_user=w03
+w04 ansible_host=10.0.0.104 ansible_user=w04
+
+[pi_cluster:children]
+controller
+workers
 
 [all:vars]
 ansible_python_interpreter=/usr/bin/python3
