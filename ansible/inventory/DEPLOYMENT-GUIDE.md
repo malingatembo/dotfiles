@@ -2,6 +2,21 @@
 
 Quick reference for deploying dotfiles to different environments.
 
+## Quick Start - Three Essential Commands
+
+```bash
+# Deploy to localhost (laptop)
+cd ~/projects/personal/dotfiles/ansible && ansible-playbook -i inventory/hosts-laptop playbook.yml
+
+# Deploy to external VM (after editing inventory/hosts-vms with VM details)
+cd ~/projects/personal/dotfiles/ansible && ansible-playbook -i inventory/hosts-vms playbook.yml -l vms --ask-become-pass
+
+# Deploy to all Pis
+cd ~/projects/personal/dotfiles/ansible && ansible-playbook -i inventory/hosts-pis playbook.yml -l pi_cluster --extra-vars "ansible_become_pass=123qwe"
+```
+
+---
+
 ## Prerequisites
 
 - SSH access to target machines
