@@ -41,37 +41,75 @@ GREEN='\[\e[92m\]'
 CYAN='\[\e[96m\]'
 PURPLE='\[\e[95m\]'
 YELLOW='\[\e[93m\]'
+MAGENTA='\[\e[38;5;201m\]'
+PINK='\[\e[38;5;213m\]'
+CRIMSON='\[\e[38;5;196m\]'
+HOTPINK='\[\e[38;5;198m\]'
+LIME='\[\e[38;5;118m\]'
+GOLD='\[\e[38;5;220m\]'
+CORAL='\[\e[38;5;209m\]'
+TEAL='\[\e[38;5;37m\]'
+LAVENDER='\[\e[38;5;183m\]'
+NEONGREEN='\[\e[38;5;46m\]'
 
-# Set prompt colors based on machine type
-# Detect machine type by hostname
-case "$(hostname)" in
-    # Raspberry Pi cluster (green theme)
-    c00|w0[1-4]|pi*)
-        BRACKET_COLOR="${GREEN}"
-        USER_COLOR="${CYAN}"
-        AT_COLOR="${BEIGE}"
-        HOST_COLOR="${PURPLE}"
-        PATH_COLOR="${BEIGE}"
-        ;;
-    # VMs (yellow theme)
-    vm*|.*\.local)
-        BRACKET_COLOR="${YELLOW}"
-        USER_COLOR="${ORANGE}"
-        AT_COLOR="${BEIGE}"
-        HOST_COLOR="${CYAN}"
-        PATH_COLOR="${BEIGE}"
-        ;;
-    # Laptop/default (red theme - original)
-    *)
-        BRACKET_COLOR="${RED}"
-        USER_COLOR="${ORANGE}"
-        AT_COLOR="${BEIGE}"
-        HOST_COLOR="${BLUE}"
-        PATH_COLOR="${BEIGE}"
-        ;;
-esac
+# Array of 20 PS1 color themes
+declare -a PS1_THEMES=(
+    # 1. Ocean Blue
+    "${RED}:${ORANGE}:${BEIGE}:${BLUE}:${BEIGE}"
+    # 2. Forest Green
+    "${GREEN}:${CYAN}:${BEIGE}:${PURPLE}:${BEIGE}"
+    # 3. Sunset
+    "${YELLOW}:${ORANGE}:${BEIGE}:${CYAN}:${BEIGE}"
+    # 4. Purple Haze
+    "${PURPLE}:${CYAN}:${BEIGE}:${YELLOW}:${BEIGE}"
+    # 5. Mint Fresh
+    "${CYAN}:${GREEN}:${BEIGE}:${BLUE}:${BEIGE}"
+    # 6. Fire Engine 🔥
+    "${RED}:${YELLOW}:${BEIGE}:${ORANGE}:${BEIGE}"
+    # 7. Electric Blue
+    "${BLUE}:${CYAN}:${BEIGE}:${PURPLE}:${BEIGE}"
+    # 8. Lemon Lime
+    "${YELLOW}:${GREEN}:${BEIGE}:${CYAN}:${BEIGE}"
+    # 9. Grape Soda
+    "${PURPLE}:${PURPLE}:${BEIGE}:${CYAN}:${BEIGE}"
+    # 10. Tangerine Dream
+    "${ORANGE}:${YELLOW}:${BEIGE}:${RED}:${BEIGE}"
+    # 11. Inferno 🔥🔥
+    "${CRIMSON}:${ORANGE}:${GOLD}:${YELLOW}:${CORAL}"
+    # 12. Volcano 🔥
+    "${RED}:${CRIMSON}:${ORANGE}:${GOLD}:${ORANGE}"
+    # 13. Hot Magenta 🔥
+    "${MAGENTA}:${HOTPINK}:${BEIGE}:${CRIMSON}:${PINK}"
+    # 14. Neon Nights 🔥
+    "${NEONGREEN}:${MAGENTA}:${BEIGE}:${CYAN}:${YELLOW}"
+    # 15. Solar Flare 🔥
+    "${GOLD}:${ORANGE}:${BEIGE}:${CRIMSON}:${YELLOW}"
+    # 16. Tropical Heat
+    "${CORAL}:${HOTPINK}:${BEIGE}:${TEAL}:${GOLD}"
+    # 17. Candy Rush
+    "${HOTPINK}:${LAVENDER}:${BEIGE}:${CYAN}:${PINK}"
+    # 18. Laser Show 🔥
+    "${CYAN}:${MAGENTA}:${BEIGE}:${NEONGREEN}:${HOTPINK}"
+    # 19. Phoenix Rising 🔥
+    "${CRIMSON}:${GOLD}:${ORANGE}:${RED}:${YELLOW}"
+    # 20. Matrix Glitch
+    "${NEONGREEN}:${LIME}:${BEIGE}:${TEAL}:${GREEN}"
+)
 
-# Set the prompt string with machine-specific colors
+# Randomly select a theme (or use hostname-based selection)
+if [[ -f ~/.ps1_theme_index ]]; then
+    # Use saved theme index for consistency across sessions
+    THEME_INDEX=$(cat ~/.ps1_theme_index)
+else
+    # Generate random theme and save it
+    THEME_INDEX=$((RANDOM % 20))
+    echo "$THEME_INDEX" > ~/.ps1_theme_index
+fi
+
+# Parse selected theme
+IFS=':' read -r BRACKET_COLOR USER_COLOR AT_COLOR HOST_COLOR PATH_COLOR <<< "${PS1_THEMES[$THEME_INDEX]}"
+
+# Set the prompt string with randomly selected colors
 PS1="${BOLD}${BRACKET_COLOR}[${USER_COLOR}\u${AT_COLOR}@${HOST_COLOR}\h ${PATH_COLOR}\W\$(__git_ps1 \" (%s)\")${BRACKET_COLOR}]${PATH_COLOR}\$ ${NORMAL}"
 
 # Git lol
