@@ -37,9 +37,42 @@ RED='\[\e[91m\]'
 ORANGE='\[\e[38;5;208m\]'
 BEIGE='\[\e[38;5;223m\]'
 BLUE='\[\e[38;5;33m\]'
+GREEN='\[\e[92m\]'
+CYAN='\[\e[96m\]'
+PURPLE='\[\e[95m\]'
+YELLOW='\[\e[93m\]'
 
-# Set the prompt string with colors
-PS1="${BOLD}${RED}[${ORANGE}\u${BEIGE}@${BLUE}\h ${BEIGE}\W\$(__git_ps1 \" (%s)\")${RED}]${BEIGE}\$ ${NORMAL}"
+# Set prompt colors based on machine type
+# Detect machine type by hostname
+case "$(hostname)" in
+    # Raspberry Pi cluster (green theme)
+    c00|w0[1-4]|pi*)
+        BRACKET_COLOR="${GREEN}"
+        USER_COLOR="${CYAN}"
+        AT_COLOR="${BEIGE}"
+        HOST_COLOR="${PURPLE}"
+        PATH_COLOR="${BEIGE}"
+        ;;
+    # VMs (yellow theme)
+    vm*|.*\.local)
+        BRACKET_COLOR="${YELLOW}"
+        USER_COLOR="${ORANGE}"
+        AT_COLOR="${BEIGE}"
+        HOST_COLOR="${CYAN}"
+        PATH_COLOR="${BEIGE}"
+        ;;
+    # Laptop/default (red theme - original)
+    *)
+        BRACKET_COLOR="${RED}"
+        USER_COLOR="${ORANGE}"
+        AT_COLOR="${BEIGE}"
+        HOST_COLOR="${BLUE}"
+        PATH_COLOR="${BEIGE}"
+        ;;
+esac
+
+# Set the prompt string with machine-specific colors
+PS1="${BOLD}${BRACKET_COLOR}[${USER_COLOR}\u${AT_COLOR}@${HOST_COLOR}\h ${PATH_COLOR}\W\$(__git_ps1 \" (%s)\")${BRACKET_COLOR}]${PATH_COLOR}\$ ${NORMAL}"
 
 # Git lol
 #git config --global alias.hist "log --pretty=format:'%Cgreen%h%Creset %ai | %s %Cblue[%an] %Cred%d' --date=short -n 10 --color"
