@@ -51,27 +51,41 @@ This repository contains dotfiles and an Ansible playbook for setting up a consi
 The Ansible playbook will automatically:
 
 1. **Install required packages** (OS-specific):
-   - tmux
-   - vim
-   - neovim
-   - curl
-   - git
-   - powerline fonts
+   - tmux, vim, neovim
+   - git, curl
+   - Python3, pip, and development tools
+   - powerline fonts (for vim-airline enhanced status line)
+   - Build tools (gcc, make, etc.)
 
-2. **Create symlinks** from your home directory to the dotfiles repo:
+2. **Install Python packages** for Vim plugins:
+   - black (Python code formatter)
+   - jedi (Python autocomplete)
+   - pylint (Python linter)
+   - flake8 (Python style checker)
+
+3. **Create symlinks** from your home directory to the dotfiles repo:
    - `~/.bashrc` → `~/dotfiles/.bashrc`
    - `~/.bash_profile` → `~/dotfiles/.bash_profile`
    - `~/.vimrc` → `~/dotfiles/.vimrc`
    - `~/.tmux.conf` → `~/dotfiles/.tmux.conf`
 
-3. **Backup existing dotfiles** to `~/.dotfiles_backup_<timestamp>/`
+4. **Backup existing dotfiles** to `~/.dotfiles_backup_<timestamp>/`
 
-4. **Install Tmux Plugin Manager (TPM)** and plugins:
+5. **Install Vim-Plug** and all Vim plugins:
+   - vim-airline (enhanced status line with powerline fonts)
+   - NERDTree (file explorer)
+   - jedi-vim (Python autocomplete)
+   - black (Python formatter)
+   - syntastic (syntax checking)
+   - vim-fugitive (git integration)
+   - vim-surround (surrounding text objects)
+   - indentpython.vim (Python indentation)
+   - Color schemes (gruvbox, zenburn, flazz)
+
+6. **Install Tmux Plugin Manager (TPM)** and plugins:
    - tmux-sensible
    - tmux-resurrect (save/restore tmux sessions)
    - tmux-continuum (automatic session saving)
-
-5. **Install Vim-Plug** and Vim plugins
 
 ## Updating Dotfiles
 
@@ -123,6 +137,43 @@ Your tmux sessions are configured to persist across reboots:
 **Note**: Session files are stored in `~/.local/share/tmux/resurrect/`
 
 ## Key Bindings and Features
+
+### Vim (Enhanced with vim-airline)
+
+**Status Line:**
+The bottom of your Vim window shows an enhanced status line with:
+- Current mode (NORMAL, INSERT, VISUAL, etc.)
+- Git branch information
+- File name and path
+- File type and encoding
+- Line/column position
+- Percentage through file
+
+**Key Bindings:**
+- `Ctrl+n` - Toggle NERDTree file explorer
+- `F2` - Insert date header
+- `F3` - Toggle line numbers
+- `F6` - Toggle netrw banner
+- `Space` - Leader key
+- `Leader+w` - Save file
+- `Leader+c` - Clear buffer
+- `Leader+s` - Reload .vimrc
+- `Leader+r` - Toggle 80-character ruler
+- `jk` or `jj` - Exit insert mode
+- `Ctrl+h/j/k/l` - Navigate between splits
+
+**NERDTree Navigation:**
+- `Enter` - Open file/directory
+- `s` - Open in vertical split
+- `i` - Open in horizontal split
+- `t` - Open in new tab
+- `m` - Show file menu (create/delete/move)
+- `?` - Toggle help
+
+**Python Development:**
+- Autocomplete works automatically with jedi-vim
+- Format code with `:Black`
+- Syntax checking with syntastic
 
 ### Tmux (Prefix: Ctrl+a)
 - `Ctrl+a` + `v` - Split window vertically
@@ -200,6 +251,38 @@ Install plugins manually:
 Run inside Vim:
 ```vim
 :PlugInstall
+:PlugUpdate
+```
+
+### vim-airline not showing properly?
+1. Ensure powerline fonts are installed:
+   ```bash
+   # Ubuntu
+   sudo apt install fonts-powerline
+   # Fedora
+   sudo dnf install powerline-fonts
+   ```
+
+2. Set your terminal font to a powerline-enabled font:
+   - "DejaVu Sans Mono for Powerline"
+   - "Source Code Pro for Powerline"
+   - "Meslo LG M for Powerline"
+
+3. Reload vim:
+   ```vim
+   :AirlineRefresh
+   ```
+
+### Python autocomplete not working in Vim?
+Ensure jedi is installed:
+```bash
+pip3 install --user jedi
+```
+
+### Black formatter not working?
+Install black:
+```bash
+pip3 install --user black
 ```
 
 ### Ansible playbook fails?

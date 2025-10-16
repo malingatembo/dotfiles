@@ -25,19 +25,38 @@ source ~/.bashrc
 ## What's Included
 
 - **Bash configuration** (`.bashrc`, `.bash_profile`, `.bashrc_extension`)
-- **Vim configuration** (`.vimrc`)
+- **Vim configuration** (`.vimrc`) with enhanced status line
 - **Tmux configuration** (`.tmux.conf`) with session persistence
 - **Ansible playbook** for automated deployment
+- **Python development environment** with pip and essential packages
 
 ## Features
 
+### Core Features
 - Automated deployment across Ubuntu and Fedora
 - Symlink-based workflow for easy git management
 - Automatic backups before deployment
-- Tmux session persistence (auto-save/restore)
-- Vim plugin management with vim-plug
-- Custom bash prompt with git branch display
 - OS-specific package installation
+
+### Bash
+- Custom colored prompt with git branch display
+- Custom aliases and shortcuts
+- Git integration with completion
+
+### Vim (Enhanced Terminal Experience)
+- **vim-airline**: Beautiful enhanced status line with powerline fonts
+- **NERDTree**: File explorer tree view (Ctrl+n)
+- **Python support**: jedi-vim autocomplete + black formatter
+- **Syntax checking**: syntastic for multiple languages
+- **Git integration**: vim-fugitive
+- **Color schemes**: gruvbox, zenburn, and more
+- **Smart features**: relative line numbers, auto-indent, custom keybindings
+
+### Tmux
+- Session persistence (auto-save/restore)
+- Auto-save every 15 minutes
+- Vim-style pane navigation
+- Custom key bindings (Ctrl+a prefix)
 
 ## Documentation
 
